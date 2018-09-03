@@ -2,6 +2,8 @@ from __future__ import absolute_import
 from test_celery.celery import app
 import time,requests
 from pymongo import MongoClient
+from bson.objectid import ObjectId
+import pymongo
 #from bs4 import BeautifulSoup
 
 #client = MongoClient('10.1.1.234', 27017) # change the ip and port to your mongo database's
@@ -10,7 +12,7 @@ client = MongoClient('database', 27017) # change the ip and port to your mongo d
 db = client["arquivopt"]
 
 @app.task(bind=True,default_retry_delay=10) # set a retry delay, 10 equal to 10s
-def longtime_add(self,url,id):
+def longtime_add(self,url,_id):
     print 'long time task begins'
     try:
         print("task.requesting",url)
@@ -22,8 +24,8 @@ def longtime_add(self,url,id):
                                     'status':r.status_code,
                                     "timestamp":time.time()}) # store status code and current time to mongodb
 
-        db["urls"].update_one({'_id':id},
-            {'$set': {"url":url,"crawled":True})
+        db["urls"].update_one({'_id': ObjectId(_id)},
+            {'$set': {"url":url,"crawled":True}})
 
         print 'long time task finished'
     

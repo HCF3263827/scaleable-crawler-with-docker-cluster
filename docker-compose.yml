@@ -8,6 +8,8 @@ services:
             - RABBITMQ_DEFAULT_PASS=mypass
         ports:
             - "5673:5672"
+        volumes:
+            - /mnt/volume_fra1_01/data/rabbitmq:/var/lib/rabbitmq/
 
     worker:
         environment:
@@ -23,10 +25,11 @@ services:
         depends_on:
             - rabbit
             - database
-        #command: ["celery", "-A", "test_celery", "worker","--concurrency","20","--loglevel","info"]
     database:
         hostname: database
         container_name: "database"
         image: mongo:latest
+        volumes:
+            - /mnt/volume_fra1_01/data/mongodb:/data/db
         ports:
             - "27017:27017"
