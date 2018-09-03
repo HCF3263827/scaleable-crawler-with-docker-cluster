@@ -12,7 +12,7 @@ client = MongoClient('database', 27017) # change the ip and port to your mongo d
 db = client["arquivopt"]
 
 @app.task(bind=True,default_retry_delay=10) # set a retry delay, 10 equal to 10s
-def longtime_add(self,url,_id):
+def longtime_add(self,url):
     print 'long time task begins'
     try:
         print("task.requesting",url)
@@ -24,16 +24,17 @@ def longtime_add(self,url,_id):
                                     'status':r.status_code,
                                     "timestamp":time.time()}) # store status code and current time to mongodb
 
-        db["urls"].update_one({'_id': ObjectId(_id)},
-            {'$set': {"url":url,"crawled":True}})
+     #   db["urls"].update_one({'_id': ObjectId(_id)},
+     #       {'$set': {"url":url,"crawled":True}})
 
         print 'long time task finished'
     
-    except pymongo.errors.DuplicateKeyError:
+    #except pymongo.errors.DuplicateKeyError:
         # skip document because it already exists in new collection
-        pass
+    #    pass
     
     except Exception as exc:
-        raise self.retry(exc=exc)
+     #   raise self.retry(exc=exc)
+        pass
     
     return r.status_code

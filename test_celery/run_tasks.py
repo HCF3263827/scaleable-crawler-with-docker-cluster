@@ -11,7 +11,7 @@ db["crawled_urls"].create_index("url", unique=True)
 
 def load_urls():
     #return collection.find({},timeout=False)[20:25]
-    return collection.find({"crawled":{ "$exists": False }},no_cursor_timeout=True).batch_size(100)
+    return collection.find({},no_cursor_timeout=True).batch_size(1000)
     
 if __name__ == '__main__':
     urls_cursor = load_urls()
@@ -20,5 +20,5 @@ if __name__ == '__main__':
         
         url = i["url"]
         print("requesting url",url)
-        result = longtime_add.delay(url, str(["_id"]))
+        result = longtime_add.delay(url)
         print 'Task result:',result.result
