@@ -37,4 +37,5 @@ def longtime_add(self,url):
      #   raise self.retry(exc=exc)
         pass
     
-    return r.status_code
+    #return r.status_code
+    return 'ok'

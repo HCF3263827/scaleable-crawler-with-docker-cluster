@@ -2,7 +2,8 @@ version: '2'
 services:
     rabbit:
         hostname: rabbit
-        image: rabbitmq:latest
+        #image: rabbitmq:latest
+        image: rabbitmq:3-management
         environment:
             - RABBITMQ_DEFAULT_USER=admin
             - RABBITMQ_DEFAULT_PASS=mypass
@@ -34,3 +35,16 @@ services:
             - /mnt/volume_fra1_01/data/mongodb:/data/db
         ports:
             - "27017:27017"
+
+    flower:
+        # Monitoring application - running on http://localhost:5555
+        build:
+        context: test_celery
+        dockerfile: flower.dockerfile
+        links:
+            - worker
+            - rabbit
+        depends_on:
+            - worker
+        ports:
+            - "5555:5555"
