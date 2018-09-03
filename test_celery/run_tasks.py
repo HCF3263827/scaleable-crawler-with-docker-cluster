@@ -1,7 +1,24 @@
 from .tasks import longtime_add
 import time
+from pymongo import MongoClient
+
+#3client = MongoClient('10.1.1.234', 27017) # change the ip and port to your mongo database's
+client = MongoClient('database', 27017) # change the ip and port to your mongo database's
+
+db = client["arquivopt"]
+collection = db["urls"]
+db["crawled_urls"].create_index("url", unique=True)
+
+def load_urls():
+    #return collection.find({},timeout=False)[20:25]
+    return collection.find({},no_cursor_timeout=True).batch_size(100)
+    
 if __name__ == '__main__':
-    url = ['http://example1.com' , 'http://example2.com' , 'http://example3.com' , 'http://example4.com' , 'http://example5.com' , 'http://example6.com' , 'http://example7.com' , 'http://example8.com'] # change them to your ur list.
-    for i in url:
-        result = longtime_add.delay(i)
+    urls_cursor = load_urls()
+    
+    for i in urls_cursor:
+        
+        url = i["url"]
+        print("requesting url",url)
+        result = longtime_add.delay(url, i["_id"])
         print 'Task result:',result.result

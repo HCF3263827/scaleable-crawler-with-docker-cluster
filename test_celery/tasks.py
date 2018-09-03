@@ -2,17 +2,36 @@ from __future__ import absolute_import
 from test_celery.celery import app
 import time,requests
 from pymongo import MongoClient
-client = MongoClient('10.1.1.234', 27018) # change the ip and port to your mongo database's
-db = client.mongodb_test
-collection = db.celery_test
-post = db.test
+#from bs4 import BeautifulSoup
+
+#client = MongoClient('10.1.1.234', 27017) # change the ip and port to your mongo database's
+client = MongoClient('database', 27017) # change the ip and port to your mongo database's
+
+db = client["arquivopt"]
+
 @app.task(bind=True,default_retry_delay=10) # set a retry delay, 10 equal to 10s
-def longtime_add(self,i):
+def longtime_add(self,url,id):
     print 'long time task begins'
     try:
-        r = requests.get(i)
-        post.insert({'status':r.status_code,"creat_time":time.time()}) # store status code and current time to mongodb
+        print("task.requesting",url)
+        r = requests.get(url)
+        html_doc = r.text
+        
+        db["crawled_urls"].insert({ "url":url, 
+                                    'html':html_doc, 
+                                    'status':r.status_code,
+                                    "timestamp":time.time()}) # store status code and current time to mongodb
+
+        db["urls"].update_one({'_id':id},
+            {'$set': {"url":url,"crawled":True})
+
         print 'long time task finished'
+    
+    except pymongo.errors.DuplicateKeyError:
+        # skip document because it already exists in new collection
+        pass
+    
     except Exception as exc:
         raise self.retry(exc=exc)
+    
     return r.status_code

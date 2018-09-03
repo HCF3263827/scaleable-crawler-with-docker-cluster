@@ -10,6 +10,8 @@ services:
             - "5673:5672"
 
     worker:
+        environment:
+            - C_FORCE_ROOT=true 
         build:
             context: .
             dockerfile: dockerfile
@@ -17,10 +19,14 @@ services:
             - .:/app
         links:
             - rabbit
+            - database
         depends_on:
             - rabbit
+            - database
+        #command: ["celery", "-A", "test_celery", "worker","--concurrency","20","--loglevel","info"]
     database:
-        hostname: mongo
+        hostname: database
+        container_name: "database"
         image: mongo:latest
         ports:
-            - "27018:27017"
+            - "27017:27017"
