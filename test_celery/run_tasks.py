@@ -24,7 +24,7 @@ if __name__ == '__main__':
     print ('Number of arguments:', len(sys.argv), 'arguments.')
     print ('Argument List:', str(sys.argv))
 
-    if(len(sys.argv) >= 2 )
+    if(len(sys.argv) >= 2 ):
         offset = int(sys.argv[1])
 
     urls_cursor = load_urls(offset)
