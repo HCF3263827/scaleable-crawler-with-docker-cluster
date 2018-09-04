@@ -8,8 +8,11 @@ services:
             - RABBITMQ_DEFAULT_USER=admin
             - RABBITMQ_DEFAULT_PASS=mypass
         ports:
-            - "5673:5672"
+            - "4369:4369"
+            - "5671:5671"
+            - "5672:5672"
             - "15672:15672"
+            - "8080:8080"
         volumes:
             - /mnt/volume_fra1_01/data/rabbitmq:/var/lib/rabbitmq/
        
@@ -35,16 +38,3 @@ services:
             - /mnt/volume_fra1_01/data/mongodb:/data/db
         ports:
             - "27017:27017"
-
-    flower:
-        # Monitoring application - running on http://localhost:5555
-        build:
-        context: test_celery
-        dockerfile: flower.dockerfile
-        links:
-            - worker
-            - rabbit
-        depends_on:
-            - worker
-        ports:
-            - "5555:5555"
