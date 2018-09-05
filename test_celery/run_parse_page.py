@@ -20,15 +20,20 @@ except:
     pass
 
 
-def load_urls(domain):
+def load_urls(domain=None):
     #return collection.find({},timeout=False)[20:25]
-    return db["url_contents"].find({"domain":{"$regex": ".*"+domain+".*"}},no_cursor_timeout=True).batch_size(200)
+    if(domain):
+        return db["url_contents"].find({"domain":{"$regex": ".*"+domain+".*"}},no_cursor_timeout=True).batch_size(200)
+    else:
+        return db["url_contents"].find({},no_cursor_timeout=True).batch_size(200)
     
 if __name__ == '__main__':
+    domain = None
     offset = 0
 
     print ('Number of arguments:', len(sys.argv), 'arguments.')
     print ('Argument List:', str(sys.argv))
+
 
     if(len(sys.argv) >= 2 ):
         domain = str(sys.argv[1])
