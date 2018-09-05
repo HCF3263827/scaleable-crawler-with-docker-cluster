@@ -49,24 +49,22 @@ def parse_url_archive(self, url):
 
 
 @app.task(bind=True, default_retry_delay=10) # set a retry delay, 10 equal to 10s
-def extract_page_title(self, archived_url):
+def parse_page(self, archived_url):
     try:
 
-        html = archived_url["html"]
-
-        start_title_tag = "<title>"
-        end_title_tag = "</title>"
-
-        start_title_tag_idx = html.find("<title>")
-        end_title_tag_idx = html.find("</title>",start_title_tag)
-
-        title = html[start_title_tag_idx + len(start_title_tag):end_title_tag_idx].strip()
         
+        article = Article(archived_url["url"]) # url can be any string
+
+        article.download(html=archived_url["html"])
+        article.parse()
+        
+        archived_url["text"] = article.text
+        archived_url["title"] = article.title
+
         del archived_url["html"]
-        archived_url["title"] = title
-
+        
         db["url_titles"].insert(archived_url)
-
+        
     except Exception as exc:
         raise self.retry(exc=exc)
         

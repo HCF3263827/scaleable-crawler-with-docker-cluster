@@ -1,7 +1,7 @@
 from .tasks import longtime_add
 from .tasks import request_url
 from .tasks import parse_url_archive
-from .tasks import extract_page_title
+from .tasks import parse_page
 
 import sys
 import time
@@ -20,7 +20,7 @@ except:
 
 def load_urls(domain):
     #return collection.find({},timeout=False)[20:25]
-    return db["url_contents"].find({"domain":{"$regex": ".*"+domain+".*"}},no_cursor_timeout=True).batch_size(1000)
+    return db["url_contents"].find({"domain":{"$regex": ".*"+domain+".*"}},no_cursor_timeout=True).batch_size(200)
     
 if __name__ == '__main__':
     offset = 0
@@ -42,4 +42,4 @@ if __name__ == '__main__':
         url = i
         del url["_id"]
         #longtime_add.apply_async(args=[url])
-        extract_page_title.apply_async(args=[url])
+        parse_page.apply_async(args=[url])
