@@ -1,11 +1,11 @@
 from .tasks import longtime_add
 import time
 from pymongo import MongoClient
-
+import sys
 #3client = MongoClient('10.1.1.234', 27017) # change the ip and port to your mongo database's
 client = MongoClient('database', 27017) # change the ip and port to your mongo database's
 
-db = client["arquivopt"]
+db = client["contamehistorias"]
 collection = db["urls"]
 db["url_contents"].create_index("url", unique=True)
 

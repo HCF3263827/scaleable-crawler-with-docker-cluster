@@ -2,14 +2,14 @@ from __future__ import absolute_import
 from test_celery.celery import app
 import time,requests
 from pymongo import MongoClient
-from urlparse import urlparse
+from urlparse4 import urlparse
 from datetime import datetime
 #from bs4 import BeautifulSoup
 
 #client = MongoClient('10.1.1.234', 27017) # change the ip and port to your mongo database's
 client = MongoClient('database', 27017) # change the ip and port to your mongo database's
 
-db = client["arquivopt"]
+db = client["contamehistorias"]
 
 #http://arquivo.pt/noFrame/replay/20080303034847/http://noticias.sapo.pt/lusa/artigo/6921150909eeac31a1a357.html
 
@@ -19,7 +19,7 @@ db = client["arquivopt"]
 # url arquivo
 # remover aspas duplas
 @app.task(bind=True, default_retry_delay=10) # set a retry delay, 10 equal to 10s
-def parse_url_archive(url):
+def parse_url_archive(self, url):
     try:
 
         if("\"" in url):
@@ -46,7 +46,7 @@ def parse_url_archive(url):
         raise self.retry(exc=exc)    
 
 @app.task(bind=True, default_retry_delay=10) # set a retry delay, 10 equal to 10s
-def request_url(archived_url):
+def request_url(self, archived_url):
     try:
 
         r = requests.get(archived_url["url"])
@@ -54,7 +54,7 @@ def request_url(archived_url):
 
         doc = archived_url
         doc["html"] = html_doc
-
+        doc["pubdate"] = datetime.strptime(doc["pubdate"], '%Y-%m-%dT%H:%M:%S')
         db["url_contents"].insert(doc)
         
     except Exception as exc:
@@ -74,8 +74,8 @@ def longtime_add(self,url,id):
                                     'status':r.status_code,
                                     "timestamp":time.time()}) # store status code and current time to mongodb
 
-        db["urls"].update_one({'_id':id},
-            {'$set': {"url":url,"crawled":True})
+#        db["urls"].update_one({'_id':id},
+#            {'$set': {"url":url,"crawled":True})
 
         print 'long time task finished'
     

@@ -1,3 +1,4 @@
+urlparse4
 #celery==4.0.2
 celery==4.1.1
 #kombu==4.1.0
