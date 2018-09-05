@@ -8,7 +8,7 @@ import time
 from pymongo import MongoClient
 from datetime import datetime
 
-from newspaper import Article
+
 
 client = MongoClient('database', 27017) # change the ip and port to your mongo database's
 

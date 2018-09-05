@@ -5,7 +5,7 @@ from pymongo import MongoClient
 from urlparse4 import urlparse
 from datetime import datetime
 #from bs4 import BeautifulSoup
-
+from newspaper import Article
 #client = MongoClient('10.1.1.234', 27017) # change the ip and port to your mongo database's
 client = MongoClient('database', 27017) # change the ip and port to your mongo database's
 
@@ -53,9 +53,10 @@ def parse_page(self, archived_url):
     try:
 
         
-        article = Article(archived_url["url"]) # url can be any string
+        article = Article('') # url can be any string
+        article.set_html(archived_url["html"])
 
-        article.download(html=archived_url["html"])
+        #article.download(html=archived_url["html"])
         article.parse()
         
         archived_url["text"] = article.text
