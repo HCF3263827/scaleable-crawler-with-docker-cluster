@@ -46,4 +46,4 @@ if __name__ == '__main__':
         url = i
         del url["_id"]
         #longtime_add.apply_async(args=[url])
-        preprocess_and_download_url.apply_async(args=[url])
+        preprocess_and_download_url.apply_async(args=[url,domain])

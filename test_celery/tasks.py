@@ -71,7 +71,7 @@ def parse_page(self, archived_url):
 
 
 @app.task(bind=True, default_retry_delay=10) # set a retry delay, 10 equal to 10s
-def preprocess_and_download_url(self, url):
+def preprocess_and_download_url(self, url, domain):
     try:
 
         if("\"" in url["url"]):
@@ -81,7 +81,7 @@ def preprocess_and_download_url(self, url):
         datetime_s = original_url.split("/")[0]
         original_url = original_url.split("/")[1:]
         original_url = "/".join(original_url)
-        domain = urlparse(original_url).netloc
+        #domain = urlparse(original_url).netloc
     
         pubdate = datetime.strptime(datetime_s, '%Y%m%d%H%M%S')        
 
