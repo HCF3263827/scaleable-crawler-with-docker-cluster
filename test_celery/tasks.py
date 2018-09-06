@@ -72,40 +72,40 @@ def parse_page(self, archived_url):
 
 @app.task(bind=True, default_retry_delay=10) # set a retry delay, 10 equal to 10s
 def preprocess_and_download_url(self, url, domain):
-    try:
+   # try:
 
-        if("\"" in url["url"]):
-            return
-        
-        original_url = url["url"].replace("http://arquivo.pt/noFrame/replay/","")
-        datetime_s = original_url.split("/")[0]
-        original_url = original_url.split("/")[1:]
-        original_url = "/".join(original_url)
-        #domain = urlparse(original_url).netloc
+    if("\"" in url["url"]):
+        return
     
-        pubdate = datetime.strptime(datetime_s, '%Y%m%d%H%M%S')        
+    original_url = url["url"].replace("http://arquivo.pt/noFrame/replay/","")
+    datetime_s = original_url.split("/")[0]
+    original_url = original_url.split("/")[1:]
+    original_url = "/".join(original_url)
+    #domain = urlparse(original_url).netloc
 
-        doc = {
-            "domain":domain,
-            "url":url,
-            "original_url":original_url,
-            "pubdate":pubdate
-        }
+    pubdate = datetime.strptime(datetime_s, '%Y%m%d%H%M%S')        
 
-        article = Article(url) # url can be any string
-        article.download()
-        article.parse()
-        
-        doc["text"] = article.text
-        doc["title"] = article.title
-        doc["authors"] = article.authors
-        doc["top_image"] = article.top_image
-        doc["movies"] = article.movies
-        
-        db["url_data"].insert(archived_url)
-        
-    except Exception as exc:
-        raise self.retry(exc=exc)        
+    doc = {
+        "domain":domain,
+        "url":url,
+        "original_url":original_url,
+        "pubdate":pubdate
+    }
+
+    article = Article(url) # url can be any string
+    article.download()
+    article.parse()
+    
+    doc["text"] = article.text
+    doc["title"] = article.title
+    doc["authors"] = article.authors
+    doc["top_image"] = article.top_image
+    doc["movies"] = article.movies
+    
+    db["url_data"].insert(archived_url)
+    
+   # except Exception as exc:
+   #     raise self.retry(exc=exc)        
         
 @app.task(bind=True, default_retry_delay=10) # set a retry delay, 10 equal to 10s
 def request_url(self, archived_url):
