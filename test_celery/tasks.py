@@ -74,10 +74,10 @@ def parse_page(self, archived_url):
 def preprocess_and_download_url(self, url):
     try:
 
-        if("\"" in url):
+        if("\"" in url["url"]):
             return
         
-        original_url = url.replace("http://arquivo.pt/noFrame/replay/","")
+        original_url = url["url"].replace("http://arquivo.pt/noFrame/replay/","")
         datetime_s = original_url.split("/")[0]
         original_url = original_url.split("/")[1:]
         original_url = "/".join(original_url)
