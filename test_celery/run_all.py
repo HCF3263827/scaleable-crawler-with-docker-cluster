@@ -22,7 +22,7 @@ def load_urls(domain, offset = 0):
     collection = db[domain]
     db["crawled_urls"].create_index("url", unique=True)
 
-    return collection.find({},no_cursor_timeout=True)batch_size(1000)
+    return collection.find({},no_cursor_timeout=True).batch_size(1000)
     
 if __name__ == '__main__':
     domain = None
